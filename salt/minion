@@ -1,0 +1,6 @@
+# Where to find master
+master: master.local
+
+# Use Grains for auto signing of keys
+autosign_grains:
+  - host

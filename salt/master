@@ -1,0 +1,2 @@
+# Auto accept keys based on Grains
+autosign_grains_dir: /etc/salt/autosign_grains
