@@ -24,9 +24,14 @@ Vagrant.configure("2") do |config|
       # Move config files to the right locations
       mv /tmp/master /etc/salt/master
       mkdir -p /etc/salt/autosign_grains/ && mv /tmp/host /etc/salt/autosign_grains/host
+      # Create the /srv/salt directory
+      mkdir -p /srv/salt
       # Restart salt daemon
       systemctl restart salt-master
     SHELL
+
+    # Folder to store releases
+    config.vm.synced_folder "release/", "/srv/salt/web"
 
   end
 

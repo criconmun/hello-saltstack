@@ -1,0 +1,12 @@
+[Unit]
+Description=Hello SaltStack Service
+After=network.target
+
+[Service]
+Type=simple
+User=nobody
+ExecStart=/usr/local/bin/hello-saltstack
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
