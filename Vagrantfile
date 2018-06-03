@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 BOX_IMAGE = "ubuntu/xenial64"
-NODE_COUNT = 1
+MINION_COUNT = 1
 SALT_VERION = 2018.3
 
 Vagrant.configure("2") do |config|
@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
     # Upload salt config files
     subconfig.vm.provision "file", source: "salt/master", destination: "/tmp/master"
     subconfig.vm.provision "file", source: "salt/host", destination: "/tmp/host"
+    subconfig.vm.provision "file", source: "salt/top.sls", destination: "/tmp/top.sls"
 
     # Install and configure salt
     subconfig.vm.provision "shell", inline: <<-SHELL
@@ -24,23 +25,22 @@ Vagrant.configure("2") do |config|
       # Move config files to the right locations
       mv /tmp/master /etc/salt/master
       mkdir -p /etc/salt/autosign_grains/ && mv /tmp/host /etc/salt/autosign_grains/host
-      # Create the /srv/salt directory
-      mkdir -p /srv/salt
+      mkdir -p /srv/salt && mv /tmp/top.sls /srv/salt/top.sls
+      # Setup the environment directories - "Salt-group" needs write access in order to "release"
+      mkdir -p /srv/salt/web/ && chown -R root.ubuntu /srv/salt/ && chmod -R 775 /srv/salt/
       # Restart salt daemon
       systemctl restart salt-master
     SHELL
 
-    # Folder to store releases
-    config.vm.synced_folder "release/", "/srv/salt/web"
-
   end
 
   # Minion nodes
-  (1..NODE_COUNT).each do |i|
+  (1..MINION_COUNT).each do |i|
     config.vm.define "minion#{i}" do |subconfig|
       subconfig.vm.box = BOX_IMAGE
       subconfig.vm.hostname = "minion#{i}"
       subconfig.vm.network "private_network", ip: "192.168.33.2#{i}"
+      subconfig.vm.network "forwarded_port", guest: 8080, host: 8080 + i
 
       # Upload salt config files
       subconfig.vm.provision "file", source: "salt/minion", destination: "/tmp/minion"

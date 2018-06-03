@@ -17,3 +17,5 @@
 hello-saltstack:
   service.running:
     - enable: True
+    - watch:
+      - file: /usr/local/bin/hello-saltstack

@@ -6,13 +6,17 @@ import (
 	"net/http"
 )
 
+var version = "v1.0"
+
 func getIndex(w http.ResponseWriter, r *http.Request) {
-	message := "Sending stuff to you..."
+	message := "Sending stuff to you: "
+	message = message + version
 	io.WriteString(w, message)
 }
 
 func postIndex(w http.ResponseWriter, r *http.Request) {
-	message := "Receiving stuff from you..."
+	message := "Receiving stuff from you: "
+	message = message + version
 	io.WriteString(w, message)
 }
 

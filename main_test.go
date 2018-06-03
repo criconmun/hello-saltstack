@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"github.com/ryanuber/go-glob"
 )
 
 func TestGetIndex(t *testing.T) {
@@ -24,8 +25,8 @@ func TestGetIndex(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := "Sending stuff to you..."
-	if rr.Body.String() != expected {
+	expected := "Sending stuff to you:*"
+	if glob.Glob(expected, rr.Body.String()) != true {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
 	}
@@ -49,8 +50,8 @@ func TestPostIndex(t *testing.T) {
 	}
 
 	// Check the response body is what we expect
-	expected := "Receiving stuff from you..."
-	if rr.Body.String() != expected {
+	expected := "Receiving stuff from you:*"
+	if glob.Glob(expected, rr.Body.String()) != true {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
 	}
