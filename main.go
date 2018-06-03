@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/spf13/viper"
 	"io"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -21,12 +25,24 @@ func postIndex(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	router := mux.NewRouter()
 
+	// Read config file
+	yamlFile, err := ioutil.ReadFile("/etc/hello-saltstack/config.yaml")
+	if err != nil {
+		fmt.Println("Could not load config file, sticking with defaults")
+	}
+	// Set defaults
+	viper.SetDefault("port", "8080")
+	// Parse config file
+	viper.SetConfigType("yaml")
+	viper.ReadConfig(bytes.NewBuffer(yamlFile))
+	port := viper.GetString("port")
+
+	// Setup webserver
+	router := mux.NewRouter()
 	router.HandleFunc("/", getIndex).Methods("GET")
 	router.HandleFunc("/", postIndex).Methods("POST")
-
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	if err := http.ListenAndServe(":"+port, router); err != nil {
 		panic(err)
 	}
 

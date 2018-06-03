@@ -1,12 +1,12 @@
-BUILD_DIR := build
-RELEASE_DIR := release
-APP_NAME := hello-saltstack
-GOLANG_VER := 1.10-stretch
-RELEASE_FILES := build/hello-saltstack service/hello-saltstack.service service/init.sls
+BUILD_DIR 			:= build
+RELEASE_DIR 		:= release
+APP_NAME 				:= hello-saltstack
+GOLANG_VER 			:= 1.10-stretch
+RELEASE_FILES 	:= build/hello-saltstack service/hello-saltstack.service service/init.sls service/config.yaml
 
 .PHONY: help build release deploy clean all
 
-help:
+help: ## Well, this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 build: ## Build the application and run unit tests
